@@ -1,0 +1,6 @@
+{
+  "appId": "io.ionic.csidentityvalutdemo",
+  "appName": "CS Demo IVCap",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}

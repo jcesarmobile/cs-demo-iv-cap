@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Plugins, StatusBarStyle } from '@capacitor/core';
 
 import { IdentityService } from './services/identity';
 
@@ -11,22 +10,22 @@ import { IdentityService } from './services/identity';
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  constructor(
-    private identity: IdentityService,
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar
-  ) {
+  constructor(private identity: IdentityService, private platform: Platform) {
     this.initializeApp();
   }
 
-  initializeApp() {
-    this.identity.ready().then(() => {
-      this.identity.get();
-    });
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
+  async initializeApp() {
+    const { SplashScreen, StatusBar } = Plugins;
+    await this.identity.ready();
+    this.identity.get();
+    try {
+      await SplashScreen.hide();
+      await StatusBar.setStyle({ style: StatusBarStyle.Light });
+      if (this.platform.is('android')) {
+        StatusBar.setBackgroundColor({ color: '#3171e0' });
+      }
+    } catch (err) {
+      console.log('This is normal in a browser', err);
+    }
   }
 }

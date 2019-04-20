@@ -1,7 +1,4 @@
 {
-  "name": "test-iv",
-  "integrations": {
-    "cordova": {}
-  },
+  "name": "cs-demo-iv-cap",
   "type": "angular"
 }
