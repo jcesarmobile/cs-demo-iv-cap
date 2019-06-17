@@ -2,7 +2,7 @@
 
 This application shows the use of Ionic's Identity Vault within a hybrid mobile application that was built using Capacitor. We assume that you have access to Ioinic's Identity Vault product. If this is not the case, please contact our sales department.
 
-## Building (either branch)
+## Building
 
 **Note:** In order to build and run the demo you will need an Ionic Enterprise API key. You will also need to be using the Ionic Enterprise Edition of the Cordova CLI. Read [these instructions](https://ionicframework.com/docs/enterprise#setup) to make sure that is set up first. This project is intentionally distributed without a `.nmprc` file in order to make it easy for you to use your own demo key. If you do not have a demo key, please contact our sales department.
 
@@ -17,7 +17,3 @@ This application connects to an API service that we have. A test user exists wit
 
 email: test@test.com
 password: test
-
-## Quirks
-
-- As of the time of this writing, `hideScreenOnBackground: true` does not work correctly on iOS

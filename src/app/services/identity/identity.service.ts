@@ -5,17 +5,21 @@ import { Router } from '@angular/router';
 import { Observable, of, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import {
   AuthMode,
   IonicIdentityVaultUser,
+  IonicNativeAuthPlugin,
   DefaultSession,
   VaultConfig,
   VaultError,
+  VaultErrorCodes
 } from '@ionic-enterprise/identity-vault';
 
 import { environment } from '../../../environments/environment';
 import { User } from '../../models/user';
+import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
+import { PinDialogComponent } from '../../pin-dialog/pin-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -26,12 +30,16 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
   changed: Subject<User>;
 
   constructor(
+    private browserAuthPlugin: BrowserAuthPlugin,
     private http: HttpClient,
+    private modalController: ModalController,
     private router: Router,
-    platform: Platform
+    private plt: Platform
   ) {
-    super(platform, {
+    super(plt, {
       authMode: AuthMode.BiometricAndPasscode,
+      // authMode: AuthMode.BiometricOnly,
+      // authMode: AuthMode.BiometricOrPasscode,
       restoreSessionOnReady: false,
       unlockOnReady: false,
       unlockOnAccess: true,
@@ -53,7 +61,7 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
 
   async set(user: User, token: string): Promise<void> {
     this.user = user;
-    await this.saveSession({username: user.email, token: token});
+    await this.login({ username: user.email, token: token });
     this.changed.next(this.user);
   }
 
@@ -68,6 +76,18 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
       await this.restoreSession();
     }
     return this.token;
+  }
+
+  async restoreSession(): Promise<DefaultSession> {
+    try {
+      return await super.restoreSession();
+    } catch (error) {
+      if (error.code === VaultErrorCodes.VaultLocked) {
+        console.log('working around the valut locked issue');
+        const vault = await this.getVault();
+        await vault.clear();
+      }
+    }
   }
 
   onSessionRestored(session: DefaultSession) {
@@ -90,15 +110,27 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
     console.log('The vault was unlocked with config: ', config);
   }
 
-  onPasscodeRequest(isPasscodeSetRequest: boolean) {
-    // NOTE: You can use this to display a customer passcode prompt
-    // to the user and then return the input
-    console.log('Passcode Requested - Was for Setup?: ', isPasscodeSetRequest);
-    return undefined;
+  async onPasscodeRequest(isPasscodeSetRequest: boolean): Promise<string> {
+    const dlg = await this.modalController.create({
+      component: PinDialogComponent,
+      componentProps: {
+        setPasscodeMode: isPasscodeSetRequest
+      }
+    });
+    dlg.present();
+    const value = await dlg.onDidDismiss();
+    return Promise.resolve(value.data);
   }
 
   onVaultLocked() {
     console.log('Vault Locked');
     this.router.navigate(['login']);
+  }
+
+  getPlugin(): IonicNativeAuthPlugin {
+    if (this.plt.is('cordova')) {
+      return super.getPlugin();
+    }
+    return this.browserAuthPlugin;
   }
 }

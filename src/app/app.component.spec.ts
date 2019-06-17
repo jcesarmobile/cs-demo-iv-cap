@@ -16,7 +16,7 @@ describe('AppComponent', () => {
     originalSplashScreen = Plugins.SplashScreen;
     originalStatusBar = Plugins.StatusBar;
     Plugins.StatusBar = jasmine.createSpyObj('StatusBar', ['setStyle', 'setBackgroundColor']);
-    Plugins.SplashScreen = jasmine.createSpyObj('SplashScreen', ['hide'])
+    Plugins.SplashScreen = jasmine.createSpyObj('SplashScreen', ['hide']);
     TestBed.configureTestingModule({
       declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -29,7 +29,7 @@ describe('AppComponent', () => {
   afterEach(() => {
     Plugins.StatusBar = originalStatusBar;
     Plugins.SplashScreen = originalSplashScreen;
-  })
+  });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);

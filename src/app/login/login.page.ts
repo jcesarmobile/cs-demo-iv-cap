@@ -72,18 +72,23 @@ export class LoginPage {
 
   private async initLoginType(): Promise<void> {
     if (await this.identity.hasStoredSession()) {
-      this.displayVaultLogin = true;
       const authMode = await this.identity.getAuthMode();
       switch (authMode) {
         case AuthMode.BiometricAndPasscode:
+          this.displayVaultLogin = true;
           this.loginType = await this.translateBiometricType();
           this.loginType += ' (Passcode Fallback)';
           break;
         case AuthMode.BiometricOnly:
+          this.displayVaultLogin = true;
           this.loginType = await this.translateBiometricType();
           break;
         case AuthMode.PasscodeOnly:
+          this.displayVaultLogin = true;
           this.loginType = 'Passcode';
+          break;
+        case AuthMode.SecureStorage:
+          this.loginType = 'Secure Storage';
           break;
       }
     } else {

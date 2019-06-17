@@ -5,9 +5,15 @@ import {
 } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 
-import { createPlatformMock, createRouterMock } from '../../../../test/mocks';
+import {
+  createOverlayControllerMock,
+  createPlatformMock,
+  createRouterMock,
+  createStorageMock
+} from '../../../../test/mocks';
 import { environment } from '../../../environments/environment';
 import { BrowserAuthPlugin } from '../browser-auth/browser-auth.plugin';
 import { BrowserAuthService } from '../browser-auth/browser-auth.service';
@@ -16,20 +22,25 @@ import { IdentityService } from './identity.service';
 describe('IdentityService', () => {
   let httpTestingController: HttpTestingController;
   let identity: IdentityService;
-  let platform;
-  let router;
+
+  beforeAll(() => {
+    (window as any).IonicNativeAuth = new BrowserAuthPlugin(
+      new BrowserAuthService(createStorageMock())
+    );
+  });
 
   beforeEach(() => {
-    platform = createPlatformMock();
-    router = createRouterMock();
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        BrowserAuthPlugin,
-        BrowserAuthService,
         IdentityService,
-        { provide: Platform, useValue: platform },
-        { provide: Router, useValue: router }
+        {
+          provide: ModalController,
+          useFactory: () => createOverlayControllerMock('Modal')
+        },
+        { provide: Platform, useFactory: createPlatformMock },
+        { provide: Router, useFactory: createRouterMock },
+        { provide: Storage, useFactory: createStorageMock }
       ]
     });
 
@@ -160,6 +171,7 @@ describe('IdentityService', () => {
 
   describe('on vault locked', () => {
     it('navigates to the login page', () => {
+      const router = TestBed.get(Router);
       identity.onVaultLocked();
       expect(router.navigate).toHaveBeenCalledTimes(1);
       expect(router.navigate).toHaveBeenCalledWith(['login']);
