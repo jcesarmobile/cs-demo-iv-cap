@@ -21,7 +21,8 @@ describe('AppComponent', () => {
       declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
-        { provide: IdentityService, useFactory: createIdentityServiceMock }
+        { provide: IdentityService, useFactory: createIdentityServiceMock },
+        { provide: Platform, useFactory: createPlatformMock }
       ]
     }).compileComponents();
   }));
@@ -37,24 +38,35 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should initialize the app', fakeAsync(() => {
-    TestBed.createComponent(AppComponent);
-    tick();
-    expect(Plugins.SplashScreen.hide).toHaveBeenCalledTimes(1);
-    expect(Plugins.StatusBar.setStyle).toHaveBeenCalledTimes(1);
-    expect(Plugins.StatusBar.setStyle).toHaveBeenCalledWith({
-      style: StatusBarStyle.Light
-    });
-    expect(Plugins.StatusBar.setBackgroundColor).not.toHaveBeenCalled();
-  }));
+  describe('initialization', () => {
+    it('hides the splash screen', fakeAsync(() => {
+      TestBed.createComponent(AppComponent);
+      tick();
+      expect(Plugins.SplashScreen.hide).toHaveBeenCalledTimes(1);
+    }));
 
-  // TODO: after upgrade of jasmine...
-  // it('sets the status bar background for android', fakeAsync(() => {
-  //   const platform = TestBed.get(Platform);
-  //   platform.is.withArgs('android').and.returnValue(true);
-  //   TestBed.createComponent(AppComponent);
-  //   tick();
-  //   expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledTimes(1);
-  //   expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledWith({ color: '#3171e0' });
-  // }));
+    it('sets the status bar style to light', fakeAsync(() => {
+      TestBed.createComponent(AppComponent);
+      tick();
+      expect(Plugins.StatusBar.setStyle).toHaveBeenCalledTimes(1);
+      expect(Plugins.StatusBar.setStyle).toHaveBeenCalledWith({
+        style: StatusBarStyle.Light
+      });
+    }));
+
+    it('does not set the status bar background color by default', fakeAsync(() => {
+      TestBed.createComponent(AppComponent);
+      tick();
+      expect(Plugins.StatusBar.setBackgroundColor).not.toHaveBeenCalled();
+    }));
+
+    it('sets the status bar background for android', fakeAsync(() => {
+      const platform = TestBed.get(Platform);
+      platform.is.withArgs('android').and.returnValue(true);
+      TestBed.createComponent(AppComponent);
+      tick();
+      expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledTimes(1);
+      expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledWith({ color: '#3171e0' });
+    }));
+  });
 });
