@@ -3,6 +3,5 @@
     <string name="app_name">CS Demo IVCap</string>
     <string name="title_activity_main">CS Demo IVCap</string>
     <string name="package_name">io.ionic.csidentityvalutdemo</string>
-    <string name="fileprovider_authority">io.ionic.csidentityvalutdemo.fileprovider</string>
     <string name="custom_url_scheme">io.ionic.csidentityvalutdemo</string>
 </resources>
