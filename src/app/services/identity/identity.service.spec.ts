@@ -47,7 +47,7 @@ describe('IdentityService', () => {
       ]
     });
 
-    httpTestingController = TestBed.get(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   beforeEach(inject([IdentityService], (service: IdentityService) => {
@@ -174,7 +174,7 @@ describe('IdentityService', () => {
 
   describe('on vault locked', () => {
     it('navigates to the login page', () => {
-      const router = TestBed.get(Router);
+      const router = TestBed.inject(Router);
       identity.onVaultLocked();
       expect(router.navigate).toHaveBeenCalledTimes(1);
       expect(router.navigate).toHaveBeenCalledWith(['login']);

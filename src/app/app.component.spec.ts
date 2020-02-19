@@ -39,34 +39,62 @@ describe('AppComponent', () => {
   });
 
   describe('initialization', () => {
-    it('hides the splash screen', fakeAsync(() => {
-      TestBed.createComponent(AppComponent);
-      tick();
-      expect(Plugins.SplashScreen.hide).toHaveBeenCalledTimes(1);
-    }));
+    let platform: Platform;
+    beforeEach(() => {
+      platform = TestBed.inject(Platform);
+    });
 
-    it('sets the status bar style to light', fakeAsync(() => {
-      TestBed.createComponent(AppComponent);
-      tick();
-      expect(Plugins.StatusBar.setStyle).toHaveBeenCalledTimes(1);
-      expect(Plugins.StatusBar.setStyle).toHaveBeenCalledWith({
-        style: StatusBarStyle.Light
+    describe('on a mobile device', () => {
+      beforeEach(() => {
+        (platform.is as any).withArgs('hybrid').and.returnValue(false);
       });
-    }));
 
-    it('does not set the status bar background color by default', fakeAsync(() => {
-      TestBed.createComponent(AppComponent);
-      tick();
-      expect(Plugins.StatusBar.setBackgroundColor).not.toHaveBeenCalled();
-    }));
+      it('does not hide the splash screen', fakeAsync(() => {
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.SplashScreen.hide).not.toHaveBeenCalled();
+      }));
 
-    it('sets the status bar background for android', fakeAsync(() => {
-      const platform = TestBed.get(Platform);
-      platform.is.withArgs('android').and.returnValue(true);
-      TestBed.createComponent(AppComponent);
-      tick();
-      expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledTimes(1);
-      expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledWith({ color: '#3171e0' });
-    }));
+      it('does not set the status bar style', fakeAsync(() => {
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.StatusBar.setStyle).not.toHaveBeenCalled();
+      }));
+    });
+
+    describe('on a mobile device', () => {
+      beforeEach(() => {
+        (platform.is as any).withArgs('hybrid').and.returnValue(true);
+      });
+
+      it('hides the splash screen', fakeAsync(() => {
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.SplashScreen.hide).toHaveBeenCalledTimes(1);
+      }));
+
+      it('sets the status bar style to light', fakeAsync(() => {
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.StatusBar.setStyle).toHaveBeenCalledTimes(1);
+        expect(Plugins.StatusBar.setStyle).toHaveBeenCalledWith({
+          style: StatusBarStyle.Light
+        });
+      }));
+
+      it('does not set the status bar background color by default', fakeAsync(() => {
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.StatusBar.setBackgroundColor).not.toHaveBeenCalled();
+      }));
+
+      it('sets the status bar background for android', fakeAsync(() => {
+        (platform.is as any).withArgs('android').and.returnValue(true);
+        TestBed.createComponent(AppComponent);
+        tick();
+        expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledTimes(1);
+        expect(Plugins.StatusBar.setBackgroundColor).toHaveBeenCalledWith({ color: '#3171e0' });
+      }));
+    });
   });
 });

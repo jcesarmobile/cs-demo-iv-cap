@@ -15,22 +15,16 @@ import { createSettingsServiceMock } from '../services/settings/settings.mock';
 describe('SettingsPage', () => {
   let component: SettingsPage;
   let fixture: ComponentFixture<SettingsPage>;
-  let authentication;
-  let identity;
-  let navController;
 
   beforeEach(async(() => {
-    authentication = createAuthenticationServiceMock();
-    identity = createIdentityServiceMock();
-    navController = createNavControllerMock();
     TestBed.configureTestingModule({
       declarations: [SettingsPage],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
-        { provide: AuthenticationService, useValue: authentication },
-        { provide: IdentityService, useValue: identity },
-        { provide: NavController, useValue: navController },
-        { provide: SettingsService, useValue: createSettingsServiceMock }
+        { provide: AuthenticationService, useFactory: createAuthenticationServiceMock },
+        { provide: IdentityService, useFactory: createIdentityServiceMock },
+        { provide: NavController, useFactory: createNavControllerMock },
+        { provide: SettingsService, useFactory: createSettingsServiceMock }
       ]
     }).compileComponents();
   }));

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -8,7 +8,8 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { httpInterceptorProviders } from './services/http-interceptors';
+import { AuthInterceptor } from './services/http-interceptors/auth-interceptor';
+import { UnauthInterceptor } from './services/http-interceptors/unauth-interceptor';
 import { PinDialogComponentModule } from './pin-dialog/pin-dialog.module';
 
 @NgModule({
@@ -23,7 +24,8 @@ import { PinDialogComponentModule } from './pin-dialog/pin-dialog.module';
     AppRoutingModule
   ],
   providers: [
-    httpInterceptorProviders,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: UnauthInterceptor, multi: true },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

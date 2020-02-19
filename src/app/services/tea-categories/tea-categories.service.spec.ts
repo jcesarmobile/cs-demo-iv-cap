@@ -21,7 +21,7 @@ describe('TeaCategoriesService', () => {
       providers: [TeaCategoriesService]
     });
 
-    httpTestingController = TestBed.get(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   beforeEach(inject([TeaCategoriesService], (service: TeaCategoriesService) => {

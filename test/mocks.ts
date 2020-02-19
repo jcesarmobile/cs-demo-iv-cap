@@ -1,3 +1,7 @@
+import { Router } from '@angular/router';
+import { NavController, Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+
 export function createActivatedRouteMock() {
   return {
     snapshot: {
@@ -7,11 +11,7 @@ export function createActivatedRouteMock() {
 }
 
 export function createNavControllerMock() {
-  return jasmine.createSpyObj('NavController', [
-    'back',
-    'navigateForward',
-    'navigateRoot'
-  ]);
+  return jasmine.createSpyObj<NavController>('NavController', ['back', 'navigateForward', 'navigateRoot']);
 }
 
 export function createOverlayElementMock(name: string) {
@@ -27,23 +27,23 @@ export function createOverlayControllerMock(name: string, element?: any) {
 }
 
 export function createPlatformMock() {
-  return jasmine.createSpyObj('Platform', {
-    ready: Promise.resolve(),
+  return jasmine.createSpyObj<Platform>('Platform', {
+    ready: Promise.resolve(''),
     is: false
   });
 }
 
 export function createRouterMock() {
-  return jasmine.createSpyObj('Router', {
+  return jasmine.createSpyObj<Router>('Router', {
     navigate: Promise.resolve(true)
   });
 }
 
 export function createStorageMock() {
-  return jasmine.createSpyObj('Storage', {
+  return jasmine.createSpyObj<Storage>('Storage', {
     clear: Promise.resolve(),
     get: Promise.resolve(),
-    ready: Promise.resolve(),
+    ready: Promise.resolve(null),
     remove: Promise.resolve(),
     set: Promise.resolve()
   });
