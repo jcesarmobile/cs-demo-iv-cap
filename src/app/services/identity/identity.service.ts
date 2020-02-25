@@ -64,14 +64,14 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
     // This is just one sample login workflow. It mostly respects the settigs
     // that were last saved with the exception that it uses "Biometrics OR Passcode"
     // in the case were both were saved and the user logged out.
-    const mode = (await this.useBiometrics())
-      ? AuthMode.BiometricOnly
-      : (await this.settings.usePasscode())
-      ? AuthMode.PasscodeOnly
-      : (await this.settings.useSecureStorageMode())
-      ? AuthMode.SecureStorage
-      : AuthMode.InMemoryOnly;
-    await this.login({ username: user.email, token: token }, mode);
+    // const mode = (await this.useBiometrics())
+    //   ? AuthMode.BiometricOnly
+    //   : (await this.settings.usePasscode())
+    //   ? AuthMode.PasscodeOnly
+    //   : (await this.settings.useSecureStorageMode())
+    //   ? AuthMode.SecureStorage
+    //   : AuthMode.InMemoryOnly;
+    await this.login({ username: user.email, token: token }, AuthMode.BiometricOnly);
     this.changed.next(this.user);
   }
 

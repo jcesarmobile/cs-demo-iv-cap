@@ -4,6 +4,8 @@ import { AuthenticationService } from '../services/authentication';
 import { IdentityService } from '../services/identity';
 import { User } from '../models/user';
 
+import { Plugins } from '@capacitor/core';
+
 @Component({
   selector: 'app-about',
   templateUrl: 'about.page.html',
@@ -23,8 +25,11 @@ export class AboutPage {
   }
 
   logout() {
-    this.authentication
-      .logout()
-      .subscribe(() => this.navController.navigateRoot('/login'));
+    this.authentication.logout().subscribe(() => this.navController.navigateRoot('/login'));
+  }
+
+  openRepro() {
+    const { Browser } = Plugins;
+    Browser.open({ url: 'http://capacitor.ionicframework.com/' });
   }
 }
