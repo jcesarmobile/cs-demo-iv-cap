@@ -41,6 +41,11 @@ export class IdentityService extends IonicIdentityVaultUser<DefaultSession> {
     super(plt, {
       authMode: AuthMode.BiometricOnly,
       restoreSessionOnReady: false,
+      androidPromptTitle: 'Nick\'s Title',
+      androidPromptSubtitle: 'My subtitle',
+      androidPromptDescription: 'any ol description',
+      // androidPromptNegativeButtonText: 'my cancel button',
+      // allowDevicePinFallback: true,
       unlockOnReady: false,
       unlockOnAccess: true,
       lockAfter: 5000,
